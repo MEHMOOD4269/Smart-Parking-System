@@ -8,7 +8,9 @@ private:
     bool isAvailable;
 
 public:
-    ParkingSlot(int id, int zone);
+    ParkingSlot();                 // default constructor
+    ParkingSlot(int id, int zone); // parameterized constructor
+
     bool getAvailability() const;
     void occupy();
     void release();
@@ -16,4 +18,3 @@ public:
 };
 
 #endif
-
