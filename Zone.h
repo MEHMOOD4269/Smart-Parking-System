@@ -1,8 +1,7 @@
 #ifndef ZONE_H
 #define ZONE_H
 
-#include "ParkingArea.h"
-
+class ParkingArea;   
 class Zone {
 private:
     int zoneId;
