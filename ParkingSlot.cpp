@@ -1,4 +1,6 @@
 #include "ParkingSlot.h"
+int completedRequests;
+int cancelledRequests;
 
 ParkingSlot::ParkingSlot() {
     slotId = -1;

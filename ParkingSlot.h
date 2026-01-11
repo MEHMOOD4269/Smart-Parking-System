@@ -1,5 +1,7 @@
 #ifndef PARKINGSLOT_H
 #define PARKINGSLOT_H
+int completedRequests;
+int cancelledRequests;
 
 class ParkingSlot {
 private:
