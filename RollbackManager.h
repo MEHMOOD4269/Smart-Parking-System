@@ -2,6 +2,7 @@
 #define ROLLBACKMANAGER_H
 
 #include "ParkingSlot.h"
+#include "ParkingRequest.h"
 
 class RollbackManager {
 private:
@@ -11,7 +12,7 @@ private:
 public:
     RollbackManager();
     void record(ParkingSlot* slot);
-    void rollback();
+    void rollback(ParkingRequest& request);
 };
 
 #endif

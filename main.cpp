@@ -103,7 +103,11 @@ int main() {
         }
 
         case 4: {
-            rollbackManager.rollback();
+            if (requestCount == 0) {
+                cout << "No requests to rollback.\n";
+                break;
+            }
+            rollbackManager.rollback(*requests[requestCount - 1]);
             cout << "Last allocation rolled back.\n";
             break;
         }

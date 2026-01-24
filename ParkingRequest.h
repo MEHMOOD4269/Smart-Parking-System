@@ -6,7 +6,8 @@ enum RequestState {
     ALLOCATED,
     OCCUPIED,
     RELEASED,
-    CANCELLED
+    CANCELLED,
+    ROLLED_BACK
 };
 
 class ParkingRequest {
@@ -19,6 +20,9 @@ public:
     ParkingRequest(int vId, int zId);
     bool changeState(RequestState newState);
     RequestState getState() const;
+    bool canAllocate() const;
+    bool canCancel() const;
+    bool canRollback() const;
 };
 
 #endif

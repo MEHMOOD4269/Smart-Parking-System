@@ -19,3 +19,15 @@ RequestState ParkingRequest::getState() const {
     return state;
 }
 
+bool ParkingRequest::canAllocate() const {
+    return state == REQUESTED;
+}
+
+bool ParkingRequest::canCancel() const {
+    return state == ALLOCATED || state == REQUESTED;
+}
+
+bool ParkingRequest::canRollback() const {
+    return state == CANCELLED || state == ALLOCATED;
+}
+
