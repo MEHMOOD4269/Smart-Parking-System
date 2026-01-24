@@ -2,16 +2,18 @@
 #include <limits>
 #include "ParkingSystem.h"
 #include "Zone.h"
+#include "ParkingArea.h"
+#include "ParkingSlot.h"
 using namespace std;
 
 int main() {
-    // Initialize 5 zones with adjacency information
+    // Initialize 5 zones with areas and slots
     Zone zones[5] = {
-        Zone(0),
-        Zone(1),
-        Zone(2),
-        Zone(3),
-        Zone(4)
+        Zone(0, 2),
+        Zone(1, 2),
+        Zone(2, 2),
+        Zone(3, 2),
+        Zone(4, 2)
     };
     
     // Set up adjacency (zone 0 adjacent to 1, zone 1 adjacent to 0 and 2, etc.)

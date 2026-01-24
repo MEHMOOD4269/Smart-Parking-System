@@ -120,10 +120,14 @@ void ParkingSystem::handleParkingRequest() {
     if (slot != nullptr) {
         bool crossZone = request->getAllocatedZone() != zoneId;
         analytics.recordAllocation(request->getAllocatedZone(), crossZone);
+        
+        // Push successful allocation to rollback stack
+        rollbackManager.push(slot, request);
 
         cout << "\nParking slot allocated successfully.\n";
         cout << "Allocated Zone: " << request->getAllocatedZone() << "\n";
         cout << "Request Time: " << currentTime << " minutes\n";
+        cout << "Request ID: " << (requestCount) << "\n";
     } else {
         cout << "\nNo parking slots available at the moment.\n";
     }
@@ -133,10 +137,11 @@ void ParkingSystem::handleParkingRequest() {
 }
 
 void ParkingSystem::handleCancel() {
-    int requestId;
+    int userId;
     cout << "\n--- Cancel Parking Request ---\n";
-    cout << "Enter Request ID to cancel (0-" << (requestCount-1) << "): ";
-    cin >> requestId;
+    cout << "Enter Request ID to cancel (1-" << requestCount << "): ";
+    cin >> userId;
+    int requestId = userId - 1;
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -144,11 +149,17 @@ void ParkingSystem::handleCancel() {
         cout << "\nInvalid request ID.\n";
     } else if (!requests[requestId]->canCancel()) {
         cout << "\nCannot cancel request in current state.\n";
+        cout << "Current state does not allow cancellation.\n";
     } else {
-        requests[requestId]->setState(CANCELLED);
-        cout << "\nRequest cancellation processed.\n";
-        cout << "Slot has been released for other users.\n";
-        analytics.recordCancellation();
+        // Validate state transition
+        if (requests[requestId]->canTransition(CANCELLED)) {
+            requests[requestId]->setState(CANCELLED);
+            cout << "\nRequest cancellation processed.\n";
+            cout << "Slot has been released for other users.\n";
+            analytics.recordCancellation();
+        } else {
+            cout << "\nInvalid state transition.\n";
+        }
     }
 
     cout << "\nPress ENTER to return to main menu...";
@@ -164,6 +175,7 @@ void ParkingSystem::handleRollback() {
         rollbackManager.rollback();
         cout << "\nPrevious allocation has been safely reverted.\n";
         cout << "Slot availability has been updated.\n";
+        cout << "Request state reset to REQUESTED.\n";
         analytics.recordRollback();
     }
 

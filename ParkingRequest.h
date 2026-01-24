@@ -29,6 +29,7 @@ public:
     void setAllocatedZone(int zone);
     int getAllocatedZone() const;
     int getRequestedZone() const;
+    bool canTransition(RequestState next) const;
 
     int getRequestTime() const;
     void setReleaseTime(int time);

@@ -24,6 +24,14 @@ bool ParkingRequest::canCancel() const {
     return state == REQUESTED || state == ALLOCATED;
 }
 
+bool ParkingRequest::canTransition(RequestState next) const {
+    if (state == REQUESTED && next == ALLOCATED) return true;
+    if (state == ALLOCATED && next == OCCUPIED) return true;
+    if (state == OCCUPIED && next == RELEASED) return true;
+    if ((state == REQUESTED || state == ALLOCATED) && next == CANCELLED) return true;
+    return false;
+}
+
 void ParkingRequest::setAllocatedZone(int zone) {
     allocatedZone = zone;
 }
