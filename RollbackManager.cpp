@@ -2,22 +2,25 @@
 #include <iostream>
 using namespace std;
 
-RollbackManager::RollbackManager() : top(-1) {}
-
-void RollbackManager::record(ParkingSlot* slot) {
-    history[++top] = slot;
+RollbackManager::RollbackManager() {
+    top = -1;
 }
 
-void RollbackManager::rollback(ParkingRequest& request) {
-    // Validate state before rollback
-    if (!request.canRollback()) {
-        cout << "Invalid state: cannot rollback\n";
-        return;
+void RollbackManager::push(ParkingSlot* slot, ParkingRequest* request) {
+    if (top < 99) {
+        stack[++top] = {slot, request};
     }
-    
-    if (top >= 0) {
-        history[top--]->release();
-        request.changeState(ROLLED_BACK);
-    }
+}
+
+void RollbackManager::rollback() {
+    if (top < 0) return;
+
+    stack[top].slot->release();
+    stack[top].request->setState(REQUESTED);
+    top--;
+}
+
+bool RollbackManager::isEmpty() const {
+    return top == -1;
 }
 

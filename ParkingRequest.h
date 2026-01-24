@@ -6,26 +6,37 @@ enum RequestState {
     ALLOCATED,
     OCCUPIED,
     RELEASED,
-    CANCELLED,
-    ROLLED_BACK
+    CANCELLED
 };
 
 class ParkingRequest {
 private:
     int vehicleId;
-    int zoneId;
+    int requestedZone;
     int allocatedZone;
+    int requestTime;
+    int releaseTime;
     RequestState state;
 
 public:
-    ParkingRequest(int vId, int zId);
-    bool changeState(RequestState newState);
-    RequestState getState() const;
+    ParkingRequest(int vid, int zone, int time);
+
     bool canAllocate() const;
+    bool canOccupy() const;
+    bool canRelease() const;
     bool canCancel() const;
-    bool canRollback() const;
-    int getAllocatedZone() const;
+
     void setAllocatedZone(int zone);
+    int getAllocatedZone() const;
+    int getRequestedZone() const;
+
+    int getRequestTime() const;
+    void setReleaseTime(int time);
+    int getReleaseTime() const;
+    int getDuration() const;
+
+    RequestState getState() const;
+    void setState(RequestState s);
 };
 
 #endif

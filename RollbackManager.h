@@ -4,15 +4,22 @@
 #include "ParkingSlot.h"
 #include "ParkingRequest.h"
 
+// Structured rollback action for STACK
+struct RollbackEntry {
+    ParkingSlot* slot;
+    ParkingRequest* request;
+};
+
 class RollbackManager {
 private:
-    ParkingSlot* history[100];
+    RollbackEntry stack[100];
     int top;
 
 public:
     RollbackManager();
-    void record(ParkingSlot* slot);
-    void rollback(ParkingRequest& request);
+    void push(ParkingSlot* slot, ParkingRequest* request);
+    void rollback();
+    bool isEmpty() const;
 };
 
 #endif
