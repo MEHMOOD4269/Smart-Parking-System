@@ -4,6 +4,7 @@
 #include "AllocationEngine.h"
 #include "RollbackManager.h"
 #include "Zone.h"
+#include "Analytics.h"
 
 using namespace std;
 
@@ -18,14 +19,12 @@ int main() {
 
     AllocationEngine allocator;
     RollbackManager rollbackManager;
+    Analytics analytics;
 
     Vehicle* vehicles[10];
     ParkingRequest* requests[10];
     int vehicleCount = 0;
     int requestCount = 0;
-
-    int completedRequests = 0;
-    int cancelledRequests = 0;
 
     int choice;
 
@@ -68,12 +67,15 @@ int main() {
             ParkingRequest* req =
                 new ParkingRequest(vIndex, vehicles[vIndex]->getPreferredZone());
 
+            analytics.recordRequest();
+
             ParkingSlot* slot = allocator.allocate(zones, ZONE_COUNT, *req);
 
             if (slot != nullptr) {
                 rollbackManager.record(slot);
                 req->changeState(OCCUPIED);
-                completedRequests++;
+                bool crossZone = (vIndex % ZONE_COUNT) != (vehicles[vIndex]->getPreferredZone() - 1);
+                analytics.recordAllocation(crossZone);
                 cout << "Parking allocated successfully.\n";
             } else {
                 cout << "No parking slot available.\n";
@@ -94,7 +96,7 @@ int main() {
             cin >> rIndex;
 
             if (requests[rIndex]->changeState(CANCELLED)) {
-                cancelledRequests++;
+                analytics.recordCancellation();
                 cout << "Request cancelled successfully.\n";
             } else {
                 cout << "Invalid cancellation.\n";
@@ -108,14 +110,13 @@ int main() {
                 break;
             }
             rollbackManager.rollback(*requests[requestCount - 1]);
+            analytics.recordRollback();
             cout << "Last allocation rolled back.\n";
             break;
         }
 
         case 5: {
-            cout << "\n--- ANALYTICS ---\n";
-            cout << "Completed Requests: " << completedRequests << endl;
-            cout << "Cancelled Requests: " << cancelledRequests << endl;
+            analytics.display();
             break;
         }
 
