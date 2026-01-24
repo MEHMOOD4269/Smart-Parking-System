@@ -1,134 +1,166 @@
 #include <iostream>
+#include <vector>
+#include <limits>
+
 #include "Vehicle.h"
 #include "ParkingRequest.h"
 #include "AllocationEngine.h"
 #include "RollbackManager.h"
-#include "Zone.h"
 #include "Analytics.h"
+#include "Zone.h"
 
 using namespace std;
 
+// Global (simple & acceptable for course)
+vector<Vehicle> vehicles;
+vector<ParkingRequest> requests;
+Analytics analytics;
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void pause() {
+    cout << "\nPress ENTER to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
+}
+
+void showHeader() {
+    cout << "=========================================\n";
+    cout << "        SMART PARKING SYSTEM\n";
+    cout << "=========================================\n\n";
+}
+
+void createVehicle() {
+    int id;
+    cout << "Enter Vehicle ID: ";
+    cin >> id;
+
+    vehicles.emplace_back(id);
+    cout << "✔ Vehicle created successfully\n";
+}
+
+void requestParking(Zone* zones, int zoneCount, AllocationEngine& engine) {
+    int vehicleId, zoneId;
+
+    cout << "Enter Vehicle ID: ";
+    cin >> vehicleId;
+
+    cout << "Enter Preferred Zone: ";
+    cin >> zoneId;
+
+    ParkingRequest req(vehicleId, zoneId);
+    analytics.recordRequest();
+
+    ParkingSlot* slot = engine.allocate(zones, zoneCount, req);
+
+    if (slot) {
+        bool crossZone = req.getAllocatedZone() != zoneId;
+        analytics.recordAllocation(crossZone);
+
+        cout << "✔ Parking allocated in Zone "
+             << req.getAllocatedZone() << "\n";
+        requests.push_back(req);
+    } else {
+        cout << "✖ No parking slot available\n";
+    }
+}
+
+void cancelParking() {
+    int id;
+    cout << "Enter Request Index: ";
+    cin >> id;
+
+    if (id < 0 || id >= requests.size()) {
+        cout << "✖ Invalid request ID\n";
+        return;
+    }
+
+    if (!requests[id].canCancel()) {
+        cout << "✖ Cannot cancel this request\n";
+        return;
+    }
+
+    requests[id].changeState(CANCELLED);
+    analytics.recordCancellation();
+    cout << "✔ Parking cancelled\n";
+}
+
+void rollbackParking() {
+    int id;
+    cout << "Enter Request Index: ";
+    cin >> id;
+
+    if (id < 0 || id >= requests.size()) {
+        cout << "✖ Invalid request ID\n";
+        return;
+    }
+
+    if (!requests[id].canRollback()) {
+        cout << "✖ Cannot rollback this request\n";
+        return;
+    }
+
+    requests[id].changeState(ROLLED_BACK);
+    analytics.recordRollback();
+    cout << "✔ Rollback successful\n";
+}
+
 int main() {
-
-    // --- SYSTEM SETUP ---
-    const int ZONE_COUNT = 2;
-    Zone zones[ZONE_COUNT] = {
-        Zone(1, 1),
-        Zone(2, 1)
-    };
-
-    AllocationEngine allocator;
-    RollbackManager rollbackManager;
-    Analytics analytics;
-
-    Vehicle* vehicles[10];
-    ParkingRequest* requests[10];
-    int vehicleCount = 0;
-    int requestCount = 0;
+    // Dummy setup (example)
+    Zone zones[2] = { Zone(1), Zone(2) };
+    AllocationEngine engine;
 
     int choice;
 
-    // --- MENU LOOP ---
     do {
-        cout << "\n===== SMART PARKING SYSTEM =====\n";
+        clearScreen();
+        showHeader();
+
         cout << "1. Create Vehicle\n";
         cout << "2. Request Parking\n";
-        cout << "3. Cancel Parking Request\n";
-        cout << "4. Rollback Last Allocation\n";
+        cout << "3. Cancel Parking\n";
+        cout << "4. Rollback Parking\n";
         cout << "5. View Analytics\n";
-        cout << "6. Exit\n";
+        cout << "0. Exit\n\n";
         cout << "Enter choice: ";
+
         cin >> choice;
 
+        clearScreen();
+        showHeader();
+
         switch (choice) {
-
-        case 1: {
-            int vId, zone;
-            cout << "Enter Vehicle ID: ";
-            cin >> vId;
-            cout << "Enter Preferred Zone: ";
-            cin >> zone;
-
-            vehicles[vehicleCount++] = new Vehicle(vId, zone);
-            cout << "Vehicle created successfully.\n";
+        case 1:
+            createVehicle();
             break;
-        }
-
-        case 2: {
-            if (vehicleCount == 0) {
-                cout << "No vehicles available.\n";
-                break;
-            }
-
-            int vIndex;
-            cout << "Enter Vehicle Index (0 to " << vehicleCount - 1 << "): ";
-            cin >> vIndex;
-
-            ParkingRequest* req =
-                new ParkingRequest(vIndex, vehicles[vIndex]->getPreferredZone());
-
-            analytics.recordRequest();
-
-            ParkingSlot* slot = allocator.allocate(zones, ZONE_COUNT, *req);
-
-            if (slot != nullptr) {
-                rollbackManager.record(slot);
-                req->changeState(OCCUPIED);
-                bool crossZone = (vIndex % ZONE_COUNT) != (vehicles[vIndex]->getPreferredZone() - 1);
-                analytics.recordAllocation(crossZone);
-                cout << "Parking allocated successfully.\n";
-            } else {
-                cout << "No parking slot available.\n";
-            }
-
-            requests[requestCount++] = req;
+        case 2:
+            requestParking(zones, 2, engine);
             break;
-        }
-
-        case 3: {
-            if (requestCount == 0) {
-                cout << "No requests to cancel.\n";
-                break;
-            }
-
-            int rIndex;
-            cout << "Enter Request Index (0 to " << requestCount - 1 << "): ";
-            cin >> rIndex;
-
-            if (requests[rIndex]->changeState(CANCELLED)) {
-                analytics.recordCancellation();
-                cout << "Request cancelled successfully.\n";
-            } else {
-                cout << "Invalid cancellation.\n";
-            }
+        case 3:
+            cancelParking();
             break;
-        }
-
-        case 4: {
-            if (requestCount == 0) {
-                cout << "No requests to rollback.\n";
-                break;
-            }
-            rollbackManager.rollback(*requests[requestCount - 1]);
-            analytics.recordRollback();
-            cout << "Last allocation rolled back.\n";
+        case 4:
+            rollbackParking();
             break;
-        }
-
-        case 5: {
+        case 5:
             analytics.display();
             break;
-        }
-
-        case 6:
+        case 0:
             cout << "Exiting system...\n";
             break;
-
         default:
-            cout << "Invalid choice.\n";
+            cout << "✖ Invalid choice\n";
         }
 
-    } while (choice != 6);
+        pause();
+
+    } while (choice != 0);
 
     return 0;
 }
