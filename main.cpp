@@ -114,8 +114,8 @@ void rollbackParking() {
 }
 
 int main() {
-    // Setup with 2 zones, each with 1 area
-    Zone zones[2] = { Zone(1, 1), Zone(2, 1) };
+    // Setup with 2 zones
+    Zone zones[2] = { Zone(1), Zone(2) };
     AllocationEngine engine;
 
     int choice;

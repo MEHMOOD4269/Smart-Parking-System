@@ -9,6 +9,7 @@ private:
     int areaCount;
 
 public:
+    Zone(int id);
     Zone(int id, int count);
     ~Zone();
     ParkingArea* getAreas();

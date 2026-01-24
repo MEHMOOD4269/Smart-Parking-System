@@ -1,6 +1,10 @@
 #include "Zone.h"
 #include "ParkingArea.h"
 
+Zone::Zone(int id) : zoneId(id), areaCount(0) {
+    areas = nullptr;
+}
+
 Zone::Zone(int id, int count) : zoneId(id), areaCount(count) {
     areas = new ParkingArea[areaCount];
 }
