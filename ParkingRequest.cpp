@@ -1,7 +1,7 @@
 #include "ParkingRequest.h"
 
 ParkingRequest::ParkingRequest(int vId, int zId)
-    : vehicleId(vId), zoneId(zId), state(REQUESTED) {}
+    : vehicleId(vId), zoneId(zId), allocatedZone(-1), state(REQUESTED) {}
 
 bool ParkingRequest::changeState(RequestState newState) {
     if (
@@ -29,5 +29,13 @@ bool ParkingRequest::canCancel() const {
 
 bool ParkingRequest::canRollback() const {
     return state == CANCELLED || state == ALLOCATED;
+}
+
+int ParkingRequest::getAllocatedZone() const {
+    return allocatedZone;
+}
+
+void ParkingRequest::setAllocatedZone(int zone) {
+    allocatedZone = zone;
 }
 

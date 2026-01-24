@@ -20,6 +20,7 @@ ParkingSlot* AllocationEngine::allocate(Zone* zones, int zoneCount, ParkingReque
         if (slot != nullptr) {
             slot->occupy();
             request.changeState(ALLOCATED);
+            request.setAllocatedZone(zones[i].getZoneId());
             return slot;
         }
     }

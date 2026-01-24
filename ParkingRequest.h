@@ -14,6 +14,7 @@ class ParkingRequest {
 private:
     int vehicleId;
     int zoneId;
+    int allocatedZone;
     RequestState state;
 
 public:
@@ -23,6 +24,8 @@ public:
     bool canAllocate() const;
     bool canCancel() const;
     bool canRollback() const;
+    int getAllocatedZone() const;
+    void setAllocatedZone(int zone);
 };
 
 #endif

@@ -37,11 +37,13 @@ void showHeader() {
 }
 
 void createVehicle() {
-    int id;
+    int id, zone;
     cout << "Enter Vehicle ID: ";
     cin >> id;
+    cout << "Enter Preferred Zone: ";
+    cin >> zone;
 
-    vehicles.emplace_back(id);
+    vehicles.emplace_back(id, zone);
     cout << "✔ Vehicle created successfully\n";
 }
 
@@ -112,8 +114,8 @@ void rollbackParking() {
 }
 
 int main() {
-    // Dummy setup (example)
-    Zone zones[2] = { Zone(1), Zone(2) };
+    // Setup with 2 zones, each with 1 area
+    Zone zones[2] = { Zone(1, 1), Zone(2, 1) };
     AllocationEngine engine;
 
     int choice;
