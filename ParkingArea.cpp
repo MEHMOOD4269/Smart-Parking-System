@@ -14,6 +14,10 @@ ParkingArea::ParkingArea(int count, int zoneId) {
     }
 }
 
+ParkingArea::~ParkingArea() {
+    delete[] slots;
+}
+
 ParkingSlot* ParkingArea::getAvailableSlot() {
     for (int i = 0; i < slotCount; i++) {
         if (slots[i].getAvailability()) {

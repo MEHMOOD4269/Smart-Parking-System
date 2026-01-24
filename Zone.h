@@ -10,6 +10,7 @@ private:
 
 public:
     Zone(int id, int count);
+    ~Zone();
     ParkingArea* getAreas();
     int getZoneId() const;
 };

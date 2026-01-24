@@ -11,6 +11,7 @@ private:
 public:
     ParkingArea();
     ParkingArea(int count, int zoneId);
+    ~ParkingArea();
     ParkingSlot* getAvailableSlot();
 };
 

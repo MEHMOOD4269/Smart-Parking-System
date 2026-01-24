@@ -5,6 +5,10 @@ Zone::Zone(int id, int count) : zoneId(id), areaCount(count) {
     areas = new ParkingArea[areaCount];
 }
 
+Zone::~Zone() {
+    delete[] areas;
+}
+
 ParkingArea* Zone::getAreas() {
     return areas;
 }
