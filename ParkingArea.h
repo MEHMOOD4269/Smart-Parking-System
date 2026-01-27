@@ -5,15 +5,17 @@
 
 class ParkingArea {
 private:
+    ParkingSlot mySlots[4]; // CHANGED: 10 -> 4
     int areaId;
-    ParkingSlot slots[10]; // Static Array: Always exists
-    int slotCount = 10;
 
 public:
     ParkingArea();
-    void setup(int id, int zId);
+
+    void setup(int zoneID, int aID);
+
     ParkingSlot* getSlots();
-    int getSlotCount() const;
+
+    int getSlotCount() const; // Ye ab 4 return karega
 };
 
 #endif

@@ -1,6 +1,4 @@
 #include "Analytics.h"
-#include <iostream>
-using namespace std;
 
 Analytics::Analytics() {
     totalRequests = 0;
@@ -8,6 +6,8 @@ Analytics::Analytics() {
     crossZoneAllocations = 0;
     cancellations = 0;
     rollbacks = 0;
+
+    // Array initialization
     for(int i=0; i<10; i++) zoneAllocations[i] = 0;
 }
 
@@ -15,13 +15,13 @@ void Analytics::recordRequest() {
     totalRequests++;
 }
 
-void Analytics::recordAllocation(int zoneId, bool crossZone) {
+void Analytics::recordAllocation(int zoneId, bool isCrossZone) {
     successfulAllocations++;
-    if (zoneId >= 0 && zoneId < 10) {
+    if (isCrossZone) crossZoneAllocations++;
+
+    // Zone tracking
+    if(zoneId >= 0 && zoneId < 10) {
         zoneAllocations[zoneId]++;
-    }
-    if (crossZone) {
-        crossZoneAllocations++;
     }
 }
 
@@ -33,12 +33,11 @@ void Analytics::recordRollback() {
     rollbacks++;
 }
 
-void Analytics::display() const {
-    cout << "\n========== ANALYTICS REPORT ==========\n";
+// FIX: Removed 'const' to match header
+void Analytics::display() {
+    cout << "\n=== ANALYTICS ===\n";
     cout << "Total Requests: " << totalRequests << endl;
-    cout << "Successful Allocations: " << successfulAllocations << endl;
-    cout << "Cross-Zone Allocations: " << crossZoneAllocations << endl;
+    cout << "Allocations: " << successfulAllocations << endl;
+    cout << "Cross-Zone: " << crossZoneAllocations << endl;
     cout << "Cancellations: " << cancellations << endl;
-    cout << "Rollbacks: " << rollbacks << endl;
-    cout << "======================================\n";
 }

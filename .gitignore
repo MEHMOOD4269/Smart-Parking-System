@@ -1,0 +1,11 @@
+# Qt generated files
+*.o
+*.obj
+*.exe
+*.dll
+Makefile*
+build-*/
+*.user
+*.pro.user
+debug/
+release/

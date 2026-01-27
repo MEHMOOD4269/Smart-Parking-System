@@ -5,16 +5,20 @@ class ParkingSlot {
 private:
     int slotId;
     int zoneId;
-    bool occupied = false; // Forced Initialization
+    int areaId;
+    bool occupied;
+    int vehicleId; // NEW: Gari ka number yaad rakhne ke liye
 
 public:
     ParkingSlot();
-    void setup(int sId, int zId);
-    bool isOccupied() const;
-    void occupy();
-    void release();
-    int getSlotId() const;
-    int getZoneId() const;
-};
+    void setup(int zId, int aId, int sId);
 
+    int getSlotId();
+    int getZoneId();
+    bool isOccupied();
+    int getVehicleId(); // NEW: Getter
+
+    void occupy(int vId); // NEW: Ab ye ID bhi lega
+    void release();
+};
 #endif

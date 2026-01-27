@@ -1,33 +1,30 @@
 #include "RollbackManager.h"
-#include <iostream>
-using namespace std;
+#include "ParkingSlot.h"
+#include "ParkingRequest.h"
+#include <iostream> // NULL ke liye
 
 RollbackManager::RollbackManager() {
     top = -1;
 }
 
-void RollbackManager::push(ParkingSlot* slot, ParkingRequest* request) {
-    if (top < 99) {
-        stack[++top] = {slot, request};
+void RollbackManager::push(ParkingSlot* s, ParkingRequest* r) {
+    if (top < 99) { // 100 ki limit check
+        top++;
+        stack[top].slot = s;
+        stack[top].request = r;
     }
 }
 
 void RollbackManager::rollback() {
-    if (top < 0) {
-        cout << "No operations to rollback.\n";
-        return;
+    if (top >= 0) {
+        // 1. Slot ko free karo
+        stack[top].slot->release();
+
+        // 2. Request ko reset karo
+        // FIX: 'REQUESTED' ki jagah 'PENDING' use kiya
+        stack[top].request->setState(PENDING);
+        stack[top].request->setAllocatedZone(-1);
+
+        top--; // Stack se hatao
     }
-
-    // Release the slot
-    stack[top].slot->release();
-    
-    // Reset request state
-    stack[top].request->setState(REQUESTED);
-    
-    cout << "Rollback successful. Slot freed.\n";
-    top--;
-}
-
-bool RollbackManager::isEmpty() const {
-    return top == -1;
 }

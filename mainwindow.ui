@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry"> <rect> <x>0</x> <y>0</y> <width>480</width> <height>800</height> </rect> </property>
+  <property name="windowTitle"> <string>Smart Parking Pro</string> </property>
+  <property name="styleSheet">
+   <string notr="true">
+    QMainWindow { background-color: #0f172a; }
+    QLabel { color: #e2e8f0; font-family: 'Segoe UI'; font-size: 14px; }
+    QLabel#label_title { color: #38bdf8; font-size: 28px; font-weight: bold; margin-bottom: 15px; }
+    QLineEdit { background-color: #1e293b; border: 2px solid #334155; border-radius: 8px; color: white; padding: 10px; font-size: 14px; }
+    QLineEdit:focus { border: 2px solid #38bdf8; }
+    QPushButton { border-radius: 10px; padding: 12px; font-weight: bold; font-size: 14px; color: white; margin-bottom: 5px; }
+
+    QPushButton#btn_check { background-color: #0891b2; } /* Cyan */
+    QPushButton#btn_book { background-color: #16a34a; }  /* Green */
+    QPushButton#btn_remove { background-color: #dc2626; } /* Red */
+    QPushButton#btn_rollback { background-color: #d97706; } /* Orange - NEW */
+    QPushButton#btn_analytics { background-color: #7c3aed; } /* Purple */
+
+    QTextBrowser { background-color: #020617; border: 1px solid #475569; border-radius: 8px; color: #a5f3fc; padding: 10px; font-family: 'Consolas'; }
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing"> <number>8</number> </property>
+    <property name="leftMargin"> <number>30</number> </property>
+    <property name="topMargin"> <number>30</number> </property>
+    <property name="rightMargin"> <number>30</number> </property>
+    <property name="bottomMargin"> <number>30</number> </property>
+
+    <item> <widget class="QLabel" name="label_title"> <property name="text"> <string>SMART PARKING</string> </property> <property name="alignment"> <set>Qt::AlignCenter</set> </property> </widget> </item>
+
+    <item> <widget class="QLabel" name="l1"> <property name="text"> <string>Vehicle ID:</string> </property> </widget> </item>
+    <item> <widget class="QLineEdit" name="input_vehicle"/> </item>
+
+    <item> <widget class="QLabel" name="l2"> <property name="text"> <string>Select Zone (0-4):</string> </property> </widget> </item>
+    <item> <widget class="QLineEdit" name="input_zone"/> </item>
+
+    <item> <widget class="QPushButton" name="btn_check"> <property name="text"> <string>1. CHECK AVAILABLE SLOTS 🔍</string> </property> </widget> </item>
+
+    <item> <widget class="QLabel" name="l3"> <property name="text"> <string>Select Slot ID (0-3):</string> </property> </widget> </item>
+    <item> <widget class="QLineEdit" name="input_slot"/> </item>
+
+    <item> <widget class="QPushButton" name="btn_book"> <property name="text"> <string>2. BOOK THIS SLOT ✅</string> </property> </widget> </item>
+
+    <item> <widget class="QPushButton" name="btn_remove"> <property name="text"> <string>DEPART VEHICLE ✖</string> </property> </widget> </item>
+
+    <item> <widget class="QPushButton" name="btn_rollback"> <property name="text"> <string>UNDO LAST ACTION ⟲</string> </property> </widget> </item>
+
+    <item> <widget class="QPushButton" name="btn_analytics"> <property name="text"> <string>VIEW ANALYTICS 📊</string> </property> </widget> </item>
+
+    <item> <widget class="QTextBrowser" name="output_log"/> </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/> <connections/>
+</ui>

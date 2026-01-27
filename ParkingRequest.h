@@ -1,11 +1,7 @@
 #ifndef PARKINGREQUEST_H
 #define PARKINGREQUEST_H
 
-enum RequestState {
-    REQUESTED,
-    ALLOCATED,
-    CANCELLED
-};
+enum RequestState { PENDING, ALLOCATED, REJECTED, CANCELLED };
 
 class ParkingRequest {
 private:
@@ -15,15 +11,16 @@ private:
     RequestState state;
 
 public:
-    ParkingRequest(int vId, int zId);
+    ParkingRequest(int vId, int zoneId);
 
-    int getRequestedZone() const;
-    void setAllocatedZone(int zone);
-    int getAllocatedZone() const;
-    
-    RequestState getState() const;
-    void setState(RequestState s);
-    bool canCancel() const;
+    // --- NEW: Getter for Vehicle ID ---
+    int getVehicleID() const { return vehicleId; }
+
+    int getRequestedZone() const { return requestedZone; }
+    int getAllocatedZone() const { return allocatedZone; }
+
+    void setAllocatedZone(int zId) { allocatedZone = zId; }
+    void setState(RequestState s) { state = s; }
 };
 
 #endif

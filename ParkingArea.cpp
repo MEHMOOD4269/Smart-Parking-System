@@ -4,12 +4,18 @@ ParkingArea::ParkingArea() {
     areaId = -1;
 }
 
-void ParkingArea::setup(int id, int zId) {
-    areaId = id;
-    for(int i = 0; i < 10; i++) {
-        slots[i].setup(i, zId);
+void ParkingArea::setup(int zoneID, int aID) {
+    areaId = aID;
+    // CHANGED: Loop 10 ki bajaye 4 tak chalega
+    for (int i = 0; i < 4; i++) {
+        mySlots[i].setup(zoneID, areaId, i);
     }
 }
 
-ParkingSlot* ParkingArea::getSlots() { return slots; }
-int ParkingArea::getSlotCount() const { return 10; }
+ParkingSlot* ParkingArea::getSlots() {
+    return mySlots;
+}
+
+int ParkingArea::getSlotCount() const {
+    return 4; // CHANGED: Return 4
+}

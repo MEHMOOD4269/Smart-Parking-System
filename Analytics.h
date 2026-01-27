@@ -1,6 +1,9 @@
 #ifndef ANALYTICS_H
 #define ANALYTICS_H
 
+#include <iostream>
+using namespace std;
+
 class Analytics {
 private:
     int totalRequests;
@@ -8,15 +11,26 @@ private:
     int crossZoneAllocations;
     int cancellations;
     int rollbacks;
-    int zoneAllocations[10]; 
+
+    // --- FIX: Ye array missing tha ---
+    int zoneAllocations[10];
 
 public:
     Analytics();
+
     void recordRequest();
-    void recordAllocation(int zoneId, bool crossZone);
+    void recordAllocation(int zoneId, bool isCrossZone);
     void recordCancellation();
     void recordRollback();
-    void display() const;
+
+    void display(); // Note: Yahan 'const' nahi hai
+
+    // Getters for GUI
+    int getTotalRequests() { return totalRequests; }
+    int getSuccessfulAllocations() { return successfulAllocations; }
+    int getCrossZoneAllocations() { return crossZoneAllocations; }
+    int getCancellations() { return cancellations; }
+    int getRollbacks() { return rollbacks; }
 };
 
 #endif
