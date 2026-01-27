@@ -1,30 +1,23 @@
 #ifndef ZONE_H
 #define ZONE_H
 
-class ParkingArea;
+#include "ParkingArea.h"
 
 class Zone {
 private:
     int zoneId;
-    ParkingArea* areas;
-    int areaCount;
-
-    int adjacentZones[5];
-    int adjacentCount;
+    ParkingArea areas[2]; // Static Array: Always exists
+    int areaCount = 2;
+    int adjacentZones[10];
+    int adjacentCount = 0;
 
 public:
-    Zone(int id);
-    Zone(int id, int count);
-    ~Zone();
-    
+    Zone();
+    void setup(int id);
+    void addAdjacentZone(int zId);
     int getZoneId() const;
     ParkingArea* getAreas();
     int getAreaCount() const;
-    
-    void addAdjacentZone(int id);
-    int* getAdjacentZones();
-    int getAdjacentCount() const;
 };
 
 #endif
-

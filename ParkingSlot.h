@@ -5,15 +5,15 @@ class ParkingSlot {
 private:
     int slotId;
     int zoneId;
-    bool isAvailable;
+    bool occupied = false; // Forced Initialization
 
 public:
-    ParkingSlot();                 // default constructor
-    ParkingSlot(int id, int zone); // parameterized constructor
-
-    bool getAvailability() const;
+    ParkingSlot();
+    void setup(int sId, int zId);
+    bool isOccupied() const;
     void occupy();
     void release();
+    int getSlotId() const;
     int getZoneId() const;
 };
 

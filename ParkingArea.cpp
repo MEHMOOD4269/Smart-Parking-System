@@ -1,28 +1,15 @@
 #include "ParkingArea.h"
 
 ParkingArea::ParkingArea() {
-    slots = nullptr;
-    slotCount = 0;
+    areaId = -1;
 }
 
-ParkingArea::ParkingArea(int count, int zoneId) {
-    slotCount = count;
-    slots = new ParkingSlot[slotCount];
-
-    for (int i = 0; i < slotCount; i++) {
-        slots[i] = ParkingSlot(i, zoneId);  // ✅ correct assignment
+void ParkingArea::setup(int id, int zId) {
+    areaId = id;
+    for(int i = 0; i < 10; i++) {
+        slots[i].setup(i, zId);
     }
 }
 
-ParkingArea::~ParkingArea() {
-    delete[] slots;
-}
-
-ParkingSlot* ParkingArea::getAvailableSlot() {
-    for (int i = 0; i < slotCount; i++) {
-        if (slots[i].getAvailability()) {
-            return &slots[i];
-        }
-    }
-    return nullptr;
-}
+ParkingSlot* ParkingArea::getSlots() { return slots; }
+int ParkingArea::getSlotCount() const { return 10; }

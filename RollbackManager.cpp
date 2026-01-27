@@ -13,14 +13,21 @@ void RollbackManager::push(ParkingSlot* slot, ParkingRequest* request) {
 }
 
 void RollbackManager::rollback() {
-    if (top < 0) return;
+    if (top < 0) {
+        cout << "No operations to rollback.\n";
+        return;
+    }
 
+    // Release the slot
     stack[top].slot->release();
+    
+    // Reset request state
     stack[top].request->setState(REQUESTED);
+    
+    cout << "Rollback successful. Slot freed.\n";
     top--;
 }
 
 bool RollbackManager::isEmpty() const {
     return top == -1;
 }
-

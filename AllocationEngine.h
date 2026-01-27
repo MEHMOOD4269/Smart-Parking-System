@@ -1,14 +1,14 @@
 #ifndef ALLOCATIONENGINE_H
 #define ALLOCATIONENGINE_H
 
-#include "Zone.h"
-#include "ParkingRequest.h"
-
-class ParkingSlot;   
+class Zone;
+class ParkingRequest;
+class RollbackManager;
+class ParkingSlot;
 
 class AllocationEngine {
 public:
-    ParkingSlot* allocate(Zone* zones, int zoneCount, ParkingRequest& request);
+    ParkingSlot* allocate(Zone* zones, int zoneCount, ParkingRequest& request, RollbackManager& rollback);
 };
 
 #endif

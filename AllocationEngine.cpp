@@ -1,82 +1,66 @@
 #include "AllocationEngine.h"
-#include "ParkingSlot.h"
-#include "ParkingArea.h"
 #include "Zone.h"
+#include "ParkingArea.h"
+#include "ParkingSlot.h"
+#include "ParkingRequest.h"
+#include "RollbackManager.h"
 #include <iostream>
+
 using namespace std;
 
-ParkingSlot* AllocationEngine::allocate(Zone* zones, int zoneCount, ParkingRequest& request) {
-    
-    // Validate state before allocation
-    if (!request.canAllocate()) {
-        cout << "Invalid state: cannot allocate\n";
-        return nullptr;
-    }
-    
-    int preferredZone = request.getRequestedZone();
-    ParkingSlot* slot = nullptr;
-    int allocatedZoneId = -1;
-    bool crossZone = false;
-    
-    // STRATEGY 1: Try SAME-ZONE first (preferred zone)
-    if (preferredZone >= 0 && preferredZone < zoneCount) {
-        ParkingArea* areas = zones[preferredZone].getAreas();
-        if (areas != nullptr) {
-            slot = areas[0].getAvailableSlot();
-            if (slot != nullptr) {
-                allocatedZoneId = zones[preferredZone].getZoneId();
-            }
-        }
-    }
-    
-    // STRATEGY 2: Try ADJACENT zones if same-zone not available
-    if (slot == nullptr) {
-        int* adjacentZones = zones[preferredZone].getAdjacentZones();
-        int adjacentCount = zones[preferredZone].getAdjacentCount();
-        
-        for (int i = 0; i < adjacentCount; i++) {
-            int adjZoneId = adjacentZones[i];
-            for (int j = 0; j < zoneCount; j++) {
-                if (zones[j].getZoneId() == adjZoneId) {
-                    ParkingArea* areas = zones[j].getAreas();
-                    if (areas != nullptr) {
-                        slot = areas[0].getAvailableSlot();
-                        if (slot != nullptr) {
-                            allocatedZoneId = zones[j].getZoneId();
-                            crossZone = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (slot != nullptr) break;
-        }
-    }
-    
-    // STRATEGY 3: Try REMAINING zones if adjacent not available
-    if (slot == nullptr) {
-        for (int i = 0; i < zoneCount; i++) {
-            if (zones[i].getZoneId() != preferredZone) {
-                ParkingArea* areas = zones[i].getAreas();
-                if (areas != nullptr) {
-                    slot = areas[0].getAvailableSlot();
-                    if (slot != nullptr) {
-                        allocatedZoneId = zones[i].getZoneId();
-                        crossZone = true;
-                        break;
+ParkingSlot* AllocationEngine::allocate(Zone* zones, int zoneCount, ParkingRequest& request, RollbackManager& rollback) {
+    int preferred = request.getRequestedZone();
+
+    // 1. Try Preferred Zone
+    for (int i = 0; i < zoneCount; i++) {
+        if (zones[i].getZoneId() == preferred) {
+            
+            // Get the static array of areas
+            ParkingArea* areas = zones[i].getAreas();
+            int areaCount = zones[i].getAreaCount();
+
+            for (int a = 0; a < areaCount; a++) {
+                // Get the static array of slots
+                ParkingSlot* slots = areas[a].getSlots();
+                int slotCount = areas[a].getSlotCount();
+
+                for (int s = 0; s < slotCount; s++) {
+                    // Check if free
+                    if (!slots[s].isOccupied()) {
+                        slots[s].occupy(); // MARK OCCUPIED
+                        
+                        request.setAllocatedZone(preferred);
+                        request.setState(ALLOCATED);
+                        rollback.push(&slots[s], &request);
+                        return &slots[s];
                     }
                 }
             }
         }
     }
-    
-    // If slot found, update request state and return
-    if (slot != nullptr) {
-        slot->occupy();
-        request.setState(ALLOCATED);
-        request.setAllocatedZone(allocatedZoneId);
-        return slot;
+
+    // 2. Cross Zone Fallback
+    for (int i = 0; i < zoneCount; i++) {
+        if (zones[i].getZoneId() != preferred) {
+            ParkingArea* areas = zones[i].getAreas();
+            int areaCount = zones[i].getAreaCount();
+
+            for (int a = 0; a < areaCount; a++) {
+                ParkingSlot* slots = areas[a].getSlots();
+                int slotCount = areas[a].getSlotCount();
+
+                for (int s = 0; s < slotCount; s++) {
+                    if (!slots[s].isOccupied()) {
+                        slots[s].occupy(); // MARK OCCUPIED
+                        
+                        request.setAllocatedZone(zones[i].getZoneId());
+                        request.setState(ALLOCATED);
+                        rollback.push(&slots[s], &request);
+                        return &slots[s];
+                    }
+                }
+            }
+        }
     }
-    
-    return nullptr; // No slot available in any zone
+    return nullptr;
 }

@@ -8,8 +8,8 @@ private:
 
 public:
     Vehicle(int id, int zone);
+    int getVehicleId() const;
     int getPreferredZone() const;
 };
 
 #endif
-

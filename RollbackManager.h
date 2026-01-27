@@ -4,7 +4,6 @@
 #include "ParkingSlot.h"
 #include "ParkingRequest.h"
 
-// Structured rollback action for STACK
 struct RollbackEntry {
     ParkingSlot* slot;
     ParkingRequest* request;
@@ -23,4 +22,3 @@ public:
 };
 
 #endif
-

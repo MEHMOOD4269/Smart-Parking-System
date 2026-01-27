@@ -1,11 +1,12 @@
-#ifndef PARKING_SYSTEM_H
-#define PARKING_SYSTEM_H
+#ifndef PARKINGSYSTEM_H
+#define PARKINGSYSTEM_H
 
 #include "Zone.h"
+#include "Vehicle.h"
+#include "ParkingRequest.h"
 #include "AllocationEngine.h"
 #include "RollbackManager.h"
 #include "Analytics.h"
-#include "ParkingRequest.h"
 
 class ParkingSystem {
 private:
@@ -14,26 +15,19 @@ private:
     AllocationEngine engine;
     RollbackManager rollbackManager;
     Analytics analytics;
-    int currentTime;
-    ParkingRequest* requests[100];  // Array of pointers to track requests
+    
+    ParkingRequest* requests[100];
     int requestCount;
-
+    
 public:
-    ParkingSystem(Zone* z, int count);
-    ~ParkingSystem();
+    // CHANGED: No arguments. System builds its own data.
+    ParkingSystem(); 
     
     void run();
-    void showMainMenu();
-    void handleCreateVehicle();
-    void handleParkingRequest();
+    void handleRequestParking();
     void handleCancel();
     void handleRollback();
-    void showAnalytics();
-    void advanceTime();
-    
-    int getCurrentTime() const { return currentTime; }
-    void setCurrentTime(int time) { currentTime = time; }
+    void showMainMenu();
 };
 
 #endif
-
